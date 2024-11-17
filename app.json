@@ -16,13 +16,22 @@
       "supportsTablet": true
     },
     "android": {
+      "permissions": [
+        "INTERNET", "WRITE_EXTERNAL_STORAGE", "READ_EXTERNAL_STORAGE"
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "vidownloader.Alpha"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "63160a61-a8bc-488b-ae68-44941dc802a8"
+      }
     }
   }
 }
