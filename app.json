@@ -4,6 +4,7 @@
     "slug": "vidownloaderfront",
     "version": "1.0.0",
     "orientation": "portrait",
+    "platforms": ["web", "ios", "android"],
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
