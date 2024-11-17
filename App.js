@@ -1,23 +1,43 @@
-//to run, use npx expo start and ensure file path is correct
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, Alert, StyleSheet, ActivityIndicator } from 'react-native';
-import * as FileSystem from 'expo-file-system';
-import * as MediaLibrary from 'expo-media-library';
 
 const App = () => {
     const [videoUrl, setVideoUrl] = useState('');
     const [isDownloading, setIsDownloading] = useState(false);
 
+    const downloadFileForWeb = async (downloadLink) => {
+        try {
+            const response = await fetch(downloadLink);
+            if (!response.ok) {
+                throw new Error('Failed to fetch the file');
+            }
+            const blob = await response.blob();
+            const urlObject = URL.createObjectURL(blob);
+
+            // Create a link and trigger the download
+            const link = document.createElement('a');
+            link.href = urlObject;
+            link.download = `video_${Date.now()}.mp4`; // Suggested file name
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            alert('Success: File downloaded successfully');
+        } catch (error) {
+            alert('Error: Failed to download video');
+            console.error('Web Download Error:', error);
+        }
+    };
+
     const downloadVideo = async () => {
         if (!videoUrl) {
-            Alert.alert('Error', 'Please enter a URL');
+            alert('Error: Please enter a URL');
             return;
         }
 
         setIsDownloading(true);
 
         try {
-            // Send the URL to the backend for processing
             const backendUrl = 'https://vidownloader-backend.onrender.com/download';
             const response = await fetch(backendUrl, {
                 method: 'POST',
@@ -31,48 +51,26 @@ const App = () => {
 
             if (result.error) {
                 setIsDownloading(false);
-                Alert.alert('Error', result.error);
+                alert(`Error: ${result.error}`);
                 return;
             }
 
-            // Get the downloadable video link from the backend response
             const downloadLink = result.downloadLink;
-            const downloadUri = `${FileSystem.documentDirectory}video_${Date.now()}.mp4`;
 
-            // Download the file using FileSystem.downloadAsync
-            const downloadResponse = await FileSystem.downloadAsync(downloadLink, downloadUri);
-            console.log('Downloaded to:', downloadResponse.uri); // Log the final saved path
-
-            if (downloadResponse && downloadResponse.uri) {
-                // Request permissions to write to media library
-                const permission = await MediaLibrary.requestPermissionsAsync();
-                if (permission.granted) {
-                    const asset = await MediaLibrary.createAssetAsync(downloadResponse.uri);
-                    const album = await MediaLibrary.getAlbumAsync('Download');
-                    if (album == null) {
-                        await MediaLibrary.createAlbumAsync('Download', asset, false);
-                    } else {
-                        await MediaLibrary.addAssetsToAlbumAsync([asset], album, false);
-                    }
-                    Alert.alert('Success', 'Download complete! File saved to the Downloads folder.');
-                } else {
-                    Alert.alert('Permission Denied', 'Permission to access media library is required to save the video.');
-                }
-            } else {
-                Alert.alert('Error', 'Download failed');
-            }
+            // Web-specific download
+            await downloadFileForWeb(downloadLink);
 
             setIsDownloading(false);
         } catch (error) {
             setIsDownloading(false);
-            Alert.alert('Error', 'Failed to download video');
+            alert('Error: Failed to download video');
             console.error('Error:', error);
         }
     };
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Video Downloader</Text>
+            <Text style={styles.title}>Web Video Downloader</Text>
             <TextInput
                 style={styles.input}
                 placeholder="Enter video URL here"

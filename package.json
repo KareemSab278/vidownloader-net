@@ -11,16 +11,15 @@
   },
   "dependencies": {
     "@expo/metro-runtime": "~4.0.0",
-    "expo": "~52.0.6",
-    "expo-camera": "~16.0.5",
-    "expo-location": "~18.0.1",
-    "expo-media-library": "~17.0.2",
-    "expo-status-bar": "~2.0.0",
+    "@expo/webpack-config": "^19.0.1",
+    "expo": "^52.0.7",
     "react": "18.3.1",
     "react-dom": "^18.3.1",
     "react-native": "0.76.2",
     "react-native-web": "^0.19.13",
-    "react-scripts": "^5.0.1"
+    "react-scripts": "^5.0.1",
+    "webpack": "^5.96.1",
+    "webpack-cli": "^5.1.4"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2"
