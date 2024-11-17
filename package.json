@@ -17,7 +17,11 @@
     "expo-media-library": "~17.0.2",
     "expo-status-bar": "~2.0.0",
     "react": "18.3.1",
-    "react-native": "0.76.2"
+    "react-dom": "18.3.1",
+    "react-native": "0.76.2",
+    "react-native-web": "~0.19.13",
+    "react-scripts": "^5.0.1",
+    "@expo/metro-runtime": "~4.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2"
