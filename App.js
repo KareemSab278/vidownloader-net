@@ -38,7 +38,7 @@ const App = () => {
         setIsDownloading(true);
 
         try {
-            const backendUrl = 'https://vidownloader-backend.onrender.com/download';
+            const backendUrl = 'https://vidownloader-backend.onrender.com/get-download-info';
             const response = await fetch(backendUrl, {
                 method: 'POST',
                 headers: {
