@@ -31,7 +31,7 @@
         fetchButton.textContent = 'Processing...';
 
         try {
-          const response = await fetch('https://vidownloader-backend.onrender.com/download', {
+          const response = await fetch('https://vidownloader-backend-1.onrender.com', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ url: videoUrl }),
