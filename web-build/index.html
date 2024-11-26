@@ -22,58 +22,53 @@
     const errorMessage = document.getElementById('errorMessage');
 
     fetchButton.addEventListener('click', async () => {
-      const videoUrl = videoUrlInput.value.trim();
+   const videoUrl = videoUrlInput.value.trim();
 
-      // Reset previous messages and buttons
-      errorMessage.textContent = '';
-      downloadButton.style.display = 'none';
+   // Reset previous messages and buttons
+   errorMessage.textContent = '';
+   downloadButton.style.display = 'none';
 
-      if (!videoUrl) {
-        errorMessage.textContent = 'Please enter a video URL.';
-        return;
+   if (!videoUrl) {
+      errorMessage.textContent = 'Please enter a video URL.';
+      return;
+   }
+
+   fetchButton.disabled = true;
+   fetchButton.textContent = 'Processing...';
+
+   try {
+      const response = await fetch('https://vidownloader-backend-1.onrender.com/download', {
+         method: 'POST',
+         headers: { 'Content-Type': 'application/json' },
+         body: JSON.stringify({ url: videoUrl }),
+      });
+
+      if (!response.ok) {
+         const errorText = await response.text();
+         console.error('Backend Error:', errorText);
+         errorMessage.textContent = 'Error: Could not fetch the download link.';
+         return;
       }
 
-      fetchButton.disabled = true;
-      fetchButton.textContent = 'Processing...';
+      // Create a blob from the binary data
+      const blob = await response.blob();
 
-      try {
-        const response = await fetch('https://vidownloader-backend-1.onrender.com/download', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ url: videoUrl }),
-        });
+      // Create a downloadable link
+      const urlObject = URL.createObjectURL(blob);
+      downloadButton.href = urlObject;
+      downloadButton.download = `video_${Date.now()}.mp4`; // Suggested file name
+      downloadButton.style.display = 'inline-block';
+      downloadButton.textContent = 'Download Video';
 
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error('Backend Error:', errorText);
-          errorMessage.textContent = 'Error: Could not fetch the download link.';
-          return;
-        }
+   } catch (error) {
+      console.error('Fetch Error:', error);
+      errorMessage.textContent = 'An error occurred. Please try again.';
+   } finally {
+      fetchButton.disabled = false;
+      fetchButton.textContent = 'Get Download Link';
+   }
+});
 
-        const data = await response.json();
-
-        if (data.error) {
-          errorMessage.textContent = `Error: ${data.error}`;
-          console.error('Error Details:', data.details || 'No additional details');
-          return;
-        }
-
-        if (data.downloadLink) {
-          // Show the download button
-          downloadButton.href = data.downloadLink;
-          downloadButton.style.display = 'inline-block';
-          downloadButton.textContent = 'Download Video';
-        } else {
-          errorMessage.textContent = 'Error: No download link available.';
-        }
-      } catch (error) {
-        console.error('Fetch Error:', error);
-        errorMessage.textContent = 'An error occurred. Please try again.';
-      } finally {
-        fetchButton.disabled = false;
-        fetchButton.textContent = 'Get Download Link';
-      }
-    });
   </script>
 </body>
 </html>
